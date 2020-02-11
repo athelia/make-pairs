@@ -37,6 +37,7 @@ Out: list of student pairs for today
 """
 
 from t1_pairs_dict import STUDENT_PAIRS
+from pprint import pprint
 import random
 import itertools
 
@@ -44,16 +45,29 @@ import itertools
 def generate_pairs():
     """Brute force, match students randomly"""
     students = set(STUDENT_PAIRS.keys())
-    print(students)
+    # print(students)
     pairs = {}
 
     while students:
-        import pdb; pdb.set_trace()
+        
         student1 = students.pop()
-        student2 = students.pop()
-        pairs[student1] = student2
-        pairs[student2] = student1
+        match = False
+        
+        while not match:
+            student2 = students.pop()
+            if student2 in STUDENT_PAIRS[student1]['excluded']:
+                print(f'Uh-oh, need a new pair for {student1}/{student2}')
+                students.add(student2)
+                student2 = students.pop()
+                print(f'How about {student1}/{student2}?')
 
+            else:
+                match = True
+
+        pairs[student1] = student2
+        # pairs[student2] = student1
+
+    pprint(pairs)
     return pairs
 
 generate_pairs()
