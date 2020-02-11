@@ -40,12 +40,23 @@ from t1_pairs_dict import STUDENT_PAIRS
 import random
 import itertools
 
-# Get random pairs
-
+# Get random pairs, ignoring all factors
 def generate_pairs():
-    """ """
-    pass
+    """Brute force, match students randomly"""
+    students = set(STUDENT_PAIRS.keys())
+    print(students)
+    pairs = {}
 
+    while students:
+        import pdb; pdb.set_trace()
+        student1 = students.pop()
+        student2 = students.pop()
+        pairs[student1] = student2
+        pairs[student2] = student1
+
+    return pairs
+
+generate_pairs()
 # Set math
 
 
