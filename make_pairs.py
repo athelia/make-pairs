@@ -40,7 +40,8 @@ FILE = 't1_pairs_dict.py'
 from t1_pairs_dict import STUDENT_PAIRS
 from pprint import pprint
 import random
-import itertools
+# import itertools
+import json
 
 def generate_pairs():
     """Match students based on exclusion list and tech level"""
@@ -76,8 +77,9 @@ def generate_pairs():
                     # match, or (3) run out of match options
                     print('Quitting: try again')
                     return
-                while should_proceed.lower() not in ['yes', 'y']:
-                    should_proceed = input('Invalid key! [Y]ES / [N]O: ')
+                else: 
+                    while should_proceed.lower() not in ['yes', 'y']:
+                        should_proceed = input('Invalid key! [Y]ES / [N]O: ')
             
             # Set math creates a new set, so remove match from original pool
             students.remove(match)
@@ -89,20 +91,28 @@ def generate_pairs():
 
     pprint(pairs)
     should_write = input('Write to file? [Y]ES / [N]O: ')
+    if should_write.lower() in ['yes', 'y']:
+        update_global_var(pairs)
+    else:
+        while should_write.lower() not in ['no', 'n']:
+            should_write = input('Invalid key! [Y]ES / [N]O: ')
+
     return pairs
 
-# Don't think this will update the file correctly - because it will only write 
-# as a string...
+
 def update_global_var(pairs):
     """Save generated pairs to global variable file"""
 
-    with open(FILE, 'w') as f:
-        for student in STUDENT_PAIRS:
-            pair = STUDENT_PAIRS[student]['past_pairs']
-            STUDENT_PAIRS[student]['past_pairs'].append(pair)
-            STUDENT_PAIRS[pair]['past_pairs'].append(student)
-            print(f"Updated student={student}['past_pairs']: {STUDENT_PAIRS[student]['past_pairs']}")
-            print(f"Updated pair={pair}['past_pairs']: {STUDENT_PAIRS[pair]['past_pairs']}")
+    with open(FILE, 'r') as f:
+        x = json.load(f)
+        for something in x:
+            print(something)
+        # for student in pairs:
+        #     pair = pairs[student]
+        #     STUDENT_PAIRS[student]['past_pairs'].append(pair)
+        #     STUDENT_PAIRS[pair]['past_pairs'].append(student)
+        #     print(f"Updated student={student}['past_pairs']: {STUDENT_PAIRS[student]['past_pairs']}")
+        #     print(f"Updated pair={pair}['past_pairs']: {STUDENT_PAIRS[pair]['past_pairs']}")
 
 
 pairs = generate_pairs()
