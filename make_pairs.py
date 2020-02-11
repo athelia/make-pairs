@@ -45,7 +45,6 @@ import itertools
 def generate_pairs():
     """Brute force, match students randomly"""
     students = set(STUDENT_PAIRS.keys())
-    # print(students)
     pairs = {}
 
     while students:
@@ -55,8 +54,21 @@ def generate_pairs():
         # The last unpaired student could be an excluded match, so this could fail
         try:
             match = (students - STUDENT_PAIRS[student]['excluded']).pop()
-            # Set math creates a new set, so remove match from original pool
-            students.remove(match)
+
+            # Is the difference in levels within 3?
+            if not abs(STUDENT_PAIRS[match]['tech_level'] - STUDENT_PAIRS[student]['tech_level']) <= 3:
+                print(f"{student} tech level={STUDENT_PAIRS[student]['tech_level']} with {match} tech level={STUDENT_PAIRS[match]['tech_level']}")
+                proceed = input('Okay to proceed? YES / NO: ')
+
+                if proceed.lower() in ['yes', 'y']:
+                    # Set math creates a new set, so remove match from original pool
+                    students.remove(match)
+                elif proceed.lower() in ['no', 'n']:
+                    print('Quitting: try again')
+                    return
+
+            else:
+                students.remove(match)
         except:
             print(f'Failed: students={students} student={student} match={match}')
 
@@ -66,7 +78,6 @@ def generate_pairs():
     return pairs
 
 generate_pairs()
-# Set math
 
 
 # # All permutations
