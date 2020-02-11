@@ -50,22 +50,17 @@ def generate_pairs():
 
     while students:
         
-        student1 = students.pop()
-        match = False
-        
-        while not match:
-            student2 = students.pop()
-            if student2 in STUDENT_PAIRS[student1]['excluded']:
-                print(f'Uh-oh, need a new pair for {student1}/{student2}')
-                students.add(student2)
-                student2 = students.pop()
-                print(f'How about {student1}/{student2}?')
+        student = students.pop()
 
-            else:
-                match = True
+        # The last unpaired student could be an excluded match, so this could fail
+        try:
+            match = (students - STUDENT_PAIRS[student]['excluded']).pop()
+            # Set math creates a new set, so remove match from original pool
+            students.remove(match)
+        except:
+            print(f'Failed: students={students} student={student} match={match}')
 
-        pairs[student1] = student2
-        # pairs[student2] = student1
+        pairs[student] = match
 
     pprint(pairs)
     return pairs
