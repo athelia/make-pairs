@@ -49,22 +49,35 @@ def generate_pairs():
     students = set(STUDENT_PAIRS.keys())
     pairs = {}
 
+    specify_pair = input('Specify pairs? [Y]ES / [N]O: ')
+
+    # if specify_pair.lower() in ['yes', 'y']:
+    while specify_pair.lower() in ['yes', 'y']:
+        student = input('Student 1: ')
+        match = input('Student 2: ')
+        students.remove(student)
+        students.remove(match)
+        pairs[student] = match
+        specify_pair = input('Specify another pair? [Y]ES / [N]O: ')
+
+
     while students:
         
         student = students.pop()
 
         # The last unpaired student could be an excluded match, so this could fail
         try:
-            match = (students - STUDENT_PAIRS[student]['excluded']).pop()
+            # Set math excludes all historical pairs and excluded pairs
+            match = (students - STUDENT_PAIRS[student]['excluded'] - set(STUDENT_PAIRS[student]['past_pairs'])).pop()
 
-            while match in STUDENT_PAIRS[student]['past_pairs']:
-            # try:
-                allowed_students = (students - STUDENT_PAIRS[student]['excluded']).pop()
-                match = allowed_students.pop()
-                print(f'Trying student={student} with match={match}')
-                # except:
-                #     print(f'Failed: students={students} student={student} match={match}')
-                #     return
+            # while match in STUDENT_PAIRS[student]['past_pairs']:
+            # # try:
+            #     allowed_students = (students - STUDENT_PAIRS[student]['excluded']).pop()
+            #     match = allowed_students.pop()
+            #     print(f'Trying student={student} with match={match}')
+            #     # except:
+            #     #     print(f'Failed: students={students} student={student} match={match}')
+            #     #     return
 
             # Is the difference in levels within 3?
             if not abs(STUDENT_PAIRS[match]['tech_level'] - STUDENT_PAIRS[student]['tech_level']) <= 3:
