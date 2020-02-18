@@ -103,12 +103,15 @@ def generate_pairs():
         pairs[student] = match
 
     pprint(pairs)
-    should_write = input('Write to file? [Y]ES / [N]O: ')
-    if should_write.lower() in ['yes', 'y']:
-        update_global_var(pairs)
-    else:
-        while should_write.lower() not in ['no', 'n']:
-            should_write = input('Invalid key! [Y]ES / [N]O: ')
+    # should_write = input('Write to file? [Y]ES / [N]O: ')
+    # if should_write.lower() in ['yes', 'y']:
+    #     update_global_var(pairs)
+    # else:
+    #     while should_write.lower() not in ['no', 'n']:
+    #         should_write = input('Invalid key! [Y]ES / [N]O: ')
+    should_check = input('Check whether pair dictionary has been updated? [Y]ES / [N]O: ')
+    if should_check.lower() in ['yes', 'y']:
+        check_dict_update(pairs)
 
     return pairs
 
@@ -128,15 +131,27 @@ def update_global_var(pairs):
         #     print(f"Updated pair={pair}['past_pairs']: {STUDENT_PAIRS[pair]['past_pairs']}")
 
 
-pairs = generate_pairs()
+def check_dict_update(pairs):
+    """Verify that manual update of pairs dict has the pairs."""
 
+    all_ok = True
+    for student in pairs:
+        match = pairs[student]
+        if STUDENT_PAIRS[student]['past_pairs'][-1] != match:
+            all_ok = False
+            print(f'Update student[\'past_pairs\']={student} match={match}')
+        if STUDENT_PAIRS[match]['past_pairs'][-1] != student:
+            all_ok = False
+            print(f'Update match[\'past_pairs\']={match} student={student}')
+
+    if all_ok:
+        print('Success! No further updates needed.')
+
+
+pairs = generate_pairs()
 
 
 # # All permutations
 # def create_options():
 #     """ """
 #     pair_permutations = itertools.permutations(STUDENT_PAIRS.keys(), 2)
-
-
-
-
