@@ -109,13 +109,11 @@ def generate_pairs():
     # else:
     #     while should_write.lower() not in ['no', 'n']:
     #         should_write = input('Invalid key! [Y]ES / [N]O: ')
-    should_check = input('Check whether pair dictionary has been updated? [Y]ES / [N]O: ')
-    if should_check.lower() in ['yes', 'y']:
-        check_dict_update(pairs)
 
     return pairs
 
 
+# Not working
 def update_global_var(pairs):
     """Save generated pairs to global variable file"""
 
