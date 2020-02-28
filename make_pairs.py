@@ -3,24 +3,15 @@ Script to make pairs. Requirements:
 - Excluded pairs: never match this student with anyone in this list
 - Tech levels: prefer to pair students who are within 3 levels
 - Historical pairs: prefer to pair students who have not worked together
-- Temperament: Assertive, Passive, Chill
-    Avoid:
-        Assertive + Passive
-    Acceptable:
-        Assertive + Assertive
-        Passive + Passive
-        Chill + Chill
-        Assertive + Chill
-        Passive + Chill
 
 Data structure: 
 
 student_pairs = {
    student_name: {
         tech_level: int,
-        temperament: string,
         excluded: set(student_name),
-        past_pairs: list[student_name]
+        past_pairs: list[student_name],
+        ratings: set(student_name)
    },
    ...
 }
@@ -60,26 +51,21 @@ def generate_pairs():
         pairs[student] = match
         specify_pair = input('Specify another pair? [Y]ES / [N]O: ')
 
-
     while students:
         
         student = students.pop()
 
         # The last unpaired student could be an excluded match, so this could fail
         try:
+            ratings_pair = set(STUDENT_PAIRS[student].get('ratings', ''))    
+            
             # Set math excludes all historical pairs and excluded pairs
-            match = (students - STUDENT_PAIRS[student]['excluded'] - set(STUDENT_PAIRS[student]['past_pairs'])).pop()
+            match = (students - STUDENT_PAIRS[student]['excluded'] - 
+                     set(STUDENT_PAIRS[student]['past_pairs']) -
+                     ratings_pair
+                     ).pop()
 
-            # while match in STUDENT_PAIRS[student]['past_pairs']:
-            # # try:
-            #     allowed_students = (students - STUDENT_PAIRS[student]['excluded']).pop()
-            #     match = allowed_students.pop()
-            #     print(f'Trying student={student} with match={match}')
-            #     # except:
-            #     #     print(f'Failed: students={students} student={student} match={match}')
-            #     #     return
-
-            # Is the difference in levels within 3?
+            # Is the difference in tech levels within 3? Otherwise prompt user
             if not abs(STUDENT_PAIRS[match]['tech_level'] - STUDENT_PAIRS[student]['tech_level']) <= 3:
                 print(f"{student} tech level={STUDENT_PAIRS[student]['tech_level']} with {match} tech level={STUDENT_PAIRS[match]['tech_level']}")
                 should_proceed = input('Okay to proceed? [Y]ES / [N]O: ')
@@ -91,13 +77,14 @@ def generate_pairs():
                     print('Quitting: try again')
                     return
                 else: 
-                    while should_proceed.lower() not in ['yes', 'y']:
+                    while should_proceed.lower() not in ['yes', 'y', 'no', 'n']:
                         should_proceed = input('Invalid key! [Y]ES / [N]O: ')
             
             # Set math creates a new set, so remove match from original pool
             students.remove(match)
+
         except:
-            print(f'Failed: students={students} student={student} match={match}')
+            print(f'Failed: student={student} match={match} pairs={pairs} students={students}')
             return
 
         pairs[student] = match
